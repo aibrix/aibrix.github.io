@@ -16,7 +16,7 @@ params:
   env: production # to enable google analytics, opengraph, twitter-cards and schema.
   title: "AIBrix Blogs"
   description: "AIBrix Blogs"
-  keywords: [Blog, AI, Infrastructure]
+  keywords: [Blog, AI, Infrastructure, LLM, Inference, Deployment, Kubernetes]
   author: "AIBrix authors"
   # author: ["Me", "You"] # multiple authors
   images: ["https://avatars.githubusercontent.com/u/172333446?s=400&u=4a09fcf58975e747296cd7952605a5f009731798&v=4"]
@@ -50,7 +50,7 @@ params:
     safari_pinned_tab: "<link / abs url>"
 
   label:
-    text: "Home"
+    text: "AIBrix Blog Home"
     icon: /apple-touch-icon.png
     iconHeight: 35
 
@@ -71,14 +71,14 @@ params:
 
   # home-info mode
   homeInfoParams:
-    Title: "Hi there \U0001F44B"
-    Content: Welcome to AIBrix blogs
+    Title: "Welcome to AIBrix blogs"
+    Content: AIBrix is a open source cost-efficient, scalable and pluggable Infrastructure for GenAI applications.
 
   socialIcons:
-    - name: x
-      url: "https://x.com/"
+    - name: slack
+      url: "https://aibrix.slack.com/"
     - name: github
-      url: "https://github.com/aibrix"
+      url: "https://github.com/aibrix/aibrix"
 
   analytics:
     google:
@@ -111,17 +111,17 @@ params:
     keys: ["title", "permalink", "summary", "content"]
 menu:
   main:
-    - identifier: categories
-      name: categories
-      url: /categories/
-      weight: 10
-    - identifier: tags
-      name: tags
-      url: /tags/
-      weight: 20
-    - identifier: example
-      name: example.org
-      url: https://example.org
+    # - identifier: categories
+    #   name: Categories
+    #   url: /categories/
+    #   weight: 10
+    # - identifier: tags
+    #   name: Tags
+    #   url: /tags/
+    #   weight: 20
+    - identifier: github
+      name: Github
+      url: https://github.com/aibrix/aibrix/
       weight: 30
 # Read: https://github.com/adityatelange/hugo-PaperMod/wiki/FAQs#using-hugos-syntax-highlighter-chroma
 pygmentsUseClasses: true
