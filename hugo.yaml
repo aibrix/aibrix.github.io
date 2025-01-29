@@ -50,7 +50,7 @@ params:
     safari_pinned_tab: "<link / abs url>"
 
   label:
-    text: "AIBrix Blog Home"
+    text: "AIBrix"
     icon: /apple-touch-icon.png
     iconHeight: 35
 
