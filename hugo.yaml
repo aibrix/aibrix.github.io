@@ -76,9 +76,9 @@ params:
 
   socialIcons:
     - name: slack
-      url: "https://aibrix.slack.com/"
+      url: "https://vllm.slack.com/"
     - name: github
-      url: "https://github.com/aibrix/aibrix"
+      url: "https://github.com/vllm-project/aibrix"
 
   analytics:
     google:
@@ -121,7 +121,7 @@ menu:
     #   weight: 20
     - identifier: github
       name: Github
-      url: https://github.com/aibrix/aibrix/
+      url: https://github.com/vllm-project/aibrix/
       weight: 30
 # Read: https://github.com/adityatelange/hugo-PaperMod/wiki/FAQs#using-hugos-syntax-highlighter-chroma
 pygmentsUseClasses: true
