@@ -1,2 +1,3 @@
-# aibrix.github.io
-aibrix static site
+# AIBrix Blog Post Website
+
+Run `hugo server` for local static hosting and development.
