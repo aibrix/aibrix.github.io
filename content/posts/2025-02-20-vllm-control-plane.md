@@ -2,7 +2,6 @@
 date: '2025-02-20T09:30:00-08:00'
 draft: false
 title: 'Introducing AIBrix: Cost-Effective and Scalable Control Plane for vLLM'
-
 disableShare: true
 hideSummary: true
 searchHidden: false
