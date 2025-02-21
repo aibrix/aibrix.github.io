@@ -17,7 +17,7 @@ params:
   title: "AIBrix Blogs"
   description: "AIBrix Blogs"
   keywords: [Blog, AI, Infrastructure, LLM, Inference, Deployment, Kubernetes]
-  author: "AIBrix authors"
+  author: "AIBrix Team"
   # author: ["Me", "You"] # multiple authors
   images: ["https://avatars.githubusercontent.com/u/172333446?s=400&u=4a09fcf58975e747296cd7952605a5f009731798&v=4"]
   DateFormat: "January 2, 2006"
