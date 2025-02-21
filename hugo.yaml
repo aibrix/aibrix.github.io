@@ -94,7 +94,7 @@ params:
     hiddenInSingle: true # hide on single page
 
   editPost:
-    URL: "https://github.com/aibrix/aibrix.github.io"
+    URL: "https://github.com/vllm-project/aibrix.github.io"
     Text: "Suggest Changes" # edit text
     appendFilePath: true # to append file path to Edit link
 
