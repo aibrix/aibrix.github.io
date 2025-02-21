@@ -76,7 +76,7 @@ params:
 
   socialIcons:
     - name: slack
-      url: "https://vllm-dev.slack.com/"
+      url: "https://vllm-dev.slack.com/archives/C08EQ883CSV"
     - name: github
       url: "https://github.com/vllm-project/aibrix"
 
