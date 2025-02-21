@@ -11,6 +11,9 @@ ShowWordCount: false
 ShowBreadCrumbs: true
 ShowPostNavLinks: true
 ShowRssButtonInSectionTermList: false
+UseHugoToc: true
+ShowToc: true
+tocopen: true
 ---
 
 Open-source large language models (LLMs) like LLaMA, Deepseek, Qwen and Mistral etc have surged in popularity, offering enterprises greater flexibility, cost savings, and control over their AI deployments. These models have empowered organizations to build their own AI-driven applications, from chatbots and agents to content generation and recommendation systems.
