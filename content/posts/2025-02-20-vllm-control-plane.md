@@ -160,6 +160,10 @@ AIBrix’s vision aligns with broader efforts to standardize LLM infrastructure,
 > 
 > *Clayton Coleman, Google Distinguished Engineer and Inference Lead for GKE*
 
+> *"vLLM has seen explosive growth worldwide, becoming a cornerstone of LLM inference. AIBrix is a promising project that builds on this momentum, offering powerful capabilities to scale and optimize vLLM for production deployments while driving innovation in open-source LLM inference."*
+>
+> *Robert Nishihara, Co-Founder of Anyscale & Co-Creator of Ray*
+
 ## Acknowledge
 
 Many of our innovative ideas have been inspired by academic research, including works such as [Preble](https://arxiv.org/abs/2407.00023), [Melange](https://arxiv.org/abs/2404.14527), [QLM](https://dl.acm.org/doi/10.1145/3698038.3698523) and [MoonCake](https://arxiv.org/abs/2407.00079). Integrating cutting-edge research into a production-grade system has been an enriching journey, enabling us to transform theoretical concepts into real-world applications. These contributions have significantly influenced our work, and we sincerely appreciate the researchers behind them—thank you! We'd also like to thank the vLLM community for their support in making AIBrix the control plane for vLLM, further strengthening our mission to build scalable and efficient AI infrastructure.
