@@ -133,3 +133,7 @@ markup:
     # guessSyntax: true
     # lineNos: true
     # style: monokai
+  # enable original html markups
+  goldmark:
+    renderer:
+      unsafe: true
