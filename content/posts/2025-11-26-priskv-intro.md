@@ -1,7 +1,7 @@
 ---
 date: '2025-11-26T12:00:00-00:00'
 draft: false
-title: 'PrisKV: An Colocated Tiered KVCache Store for LLM Serving'
+title: 'PrisKV: A Colocated Tiered KVCache Store for LLM Serving'
 author: ["Xu Wang", "Jinlong Xuan", "Yi Wang", "Haiyang Shi", "Bo Liu", "Jiaxin Shan"]
 
 disableShare: true
@@ -117,7 +117,7 @@ To address this, AIBrix provides a production-grade **[KVCache Offloading Framew
 
 ### PrisKV clusters: from individual nodes to a shared memory pool
 
-In the above examples, PrisKV is deployed as a single node. On a larger scale, you can make it as **cluster-level shared KV memory pool**.AIBrix's orchestration layer takes care of turning multiple PrisKV servers into a coherent cluster:
+In the above examples, PrisKV is deployed as a single node. On a larger scale, you can make it as a **cluster-level shared KV memory pool**. AIBrix's orchestration layer takes care of turning multiple PrisKV servers into a coherent cluster:
 
 * Cluster specs (capacity, number of nodes, tiers) are described declaratively via CRDs.  
 * PrisKV servers are sharded using a consistent-hash–style scheme, and membership/routing metadata is kept in a small control component.  
@@ -257,7 +257,7 @@ curl localhost:18000/v1/chat/completions \
 
 For cluster setup, feel free to refer to [documentation](https://github.com/aibrix/PrisKV/tree/main/samples/cluster) for more references.
 
-## How PrisKV performs?
+## PrisKV Performance
 
 Before diving into end-to-end engine benchmarks, we micro-benchmark PrisKV with **value sizes 512KB, 1MB, 2MB, 4MB, and 8MB** on H20 with 400Gbps RDMA Network, which roughly match the KV footprint of 16-64 tokens for 8B/30B/70B-class models (such as Llama-8B, Qwen-32B, and Llama-70B). Under this setting, a single PrisKV node sustains **tens of thousands of QPS with sub-millisecond average latency** over RDMA, indicating that the KV store itself has ample headroom and is unlikely to be the bottleneck for the L2 KVCache path.  
 
@@ -267,7 +267,7 @@ Before diving into end-to-end engine benchmarks, we micro-benchmark PrisKV with 
 
 ### End-to-End Benchmarking
 
-Across end-to-end vLLM benchmarking on Nvidia H20 GPUs with Qwen3-32B (TP=4) on 8k-token prompts and 200-token outputs at 16 and 32 concurrent requests, PrisKV-powered KVCache offloading consistently delivers substantial throughput and latency improvements over the baseline: at 16 concurrency, request and token throughputs increase by about 4.8x while mean TTFT drops by \~90%; TPOT also falls by \~75%. At 32 concurrency, gains are even larger: throughput improves by roughly 6.35x mean TTFT decreases by \~90.7% (4842ms→450ms)with TPOT reductions of 83–84%, as shown in following figures.  
+Across end-to-end vLLM benchmarking on Nvidia H20 GPUs with Qwen3-32B (TP=4) on 8k-token prompts and 200-token outputs at 16 and 32 concurrent requests, PrisKV-powered KVCache offloading consistently delivers substantial throughput and latency improvements over the baseline: at 16 concurrency, request and token throughputs increase by about 4.8x while mean TTFT drops by ~90%; TPOT also falls by ~75%. At 32 concurrency, gains are even larger: throughput improves by roughly 6.35x, mean TTFT decreases by ~90.7% (4842ms→450ms) with TPOT reductions of 83–84%, as shown in the following figures.
 
 <p align="center">
   <img src="/images/priskv/priskv-e2e-benchmark-throughput.png" width="30%" style="display:inline-block; margin-right:1%" />
