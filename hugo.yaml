@@ -119,6 +119,10 @@ menu:
     #   name: Tags
     #   url: /tags/
     #   weight: 20
+    - identifier: tools
+      name: Tools
+      url: /tools/batch-cost-calculator/
+      weight: 20
     - identifier: github
       name: Github
       url: https://github.com/vllm-project/aibrix/
