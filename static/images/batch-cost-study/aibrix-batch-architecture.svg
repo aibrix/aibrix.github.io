@@ -1,0 +1,210 @@
+<svg viewBox="0 0 1840 1200" xmlns="http://www.w3.org/2000/svg" role="img" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif">
+  <title>AIBrix Batch — Deployment Architecture</title>
+  <desc>End-to-end request flow across four zones: a Client (OpenAI SDK) submits files and batches to a Kubernetes Cluster whose Metadata Service runs an in-process control plane (BatchDriver, BatchManager state machine, BatchScheduler FIFO, JobStore, TemplateRegistry) and calls the Kubernetes API to create per-job workloads in one of two GA paths (a self-hosting K8s Job or a control-plane Deployment dispatcher); an External GPU preview zone runs vLLM on RunPod/Lambda over SSH; and a Managed Storage zone holds the Metastore (Redis/S3/GCS/TOS) and Object Storage (S3/GCS/TOS).</desc>
+  <defs>
+    <marker id="mb" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+    <marker id="mg" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/></marker>
+  </defs>
+
+  <!-- ===== Title ===== -->
+  <text x="40" y="46" font-size="27" font-weight="800" fill="#111827">AIBrix Batch — Deployment Architecture</text>
+  <text x="40" y="74" font-size="14.5" fill="#6b7280">End-to-end request flow ①→⑧ across Client · Kubernetes Cluster · External GPU · Managed Storage</text>
+  <line x1="40" y1="92" x2="1800" y2="92" stroke="#e5e7eb" stroke-width="1.5"/>
+
+  <!-- ===== Zone outlines ===== -->
+  <rect x="380" y="150" width="1070" height="810" rx="14" fill="#f8faff" stroke="#3b82f6" stroke-width="1.6"/>
+  <text x="402" y="178" font-size="15.5" font-weight="700" fill="#1d4ed8">Kubernetes Cluster · production-honored path</text>
+
+  <rect x="1488" y="150" width="312" height="410" rx="14" fill="#fafafa" stroke="#a1a1aa" stroke-width="1.5" stroke-dasharray="7 4"/>
+  <text x="1508" y="178" font-size="14.5" font-weight="700" fill="#3f3f46">External GPU · Preview · over SSH</text>
+  <text x="1508" y="197" font-size="11" font-style="italic" fill="#71717a">SSHLaunchRuntime provisions inline</text>
+
+  <!-- ===== Client ===== -->
+  <rect x="40" y="150" width="300" height="186" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.6"/>
+  <text x="58" y="177" font-size="10.5" font-weight="700" letter-spacing="0.5" fill="#16a34a">[ CLIENT ] · outside cluster</text>
+  <text x="58" y="204" font-size="16.5" font-weight="700" fill="#111827">User / OpenAI SDK</text>
+  <text x="58" y="232" font-size="12.5" fill="#374151">client.files.create</text>
+  <text x="58" y="254" font-size="12.5" fill="#374151">client.batches.create</text>
+  <text x="58" y="276" font-size="12.5" fill="#374151">poll + download</text>
+  <text x="58" y="308" font-size="11.5" font-style="italic" fill="#6b7280">stock SDK — only base_url changes</text>
+
+  <!-- ===== Metadata Service Pod ===== -->
+  <rect x="404" y="200" width="448" height="305" rx="10" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="422" y="225" font-size="10.5" font-weight="700" letter-spacing="0.4" fill="#6366f1">[ SERVICE ] FastAPI Deployment</text>
+  <text x="422" y="249" font-size="15.5" font-weight="700" fill="#3730a3">Metadata Service Pod</text>
+  <text x="422" y="276" font-size="12" fill="#374151">Endpoints  <tspan font-weight="700" fill="#1d4ed8">/v1/files</tspan>   <tspan font-weight="700" fill="#1d4ed8">/v1/batches</tspan></text>
+  <text x="422" y="295" font-size="11" fill="#52525b">poll /v1/batches/{id} · /v1/files/{id}/content</text>
+  <text x="422" y="322" font-size="11" font-style="italic" fill="#6b7280">In-process control plane:</text>
+  <!-- control-plane sub-boxes -->
+  <rect x="422" y="332" width="132" height="48" rx="7" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.3"/>
+  <text x="488" y="352" text-anchor="middle" font-size="12" font-weight="700" fill="#3730a3">BatchDriver</text>
+  <text x="488" y="369" text-anchor="middle" font-size="10.5" fill="#71717a">orchestrator</text>
+  <rect x="562" y="332" width="132" height="48" rx="7" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.3"/>
+  <text x="628" y="352" text-anchor="middle" font-size="12" font-weight="700" fill="#3730a3">BatchManager</text>
+  <text x="628" y="369" text-anchor="middle" font-size="10.5" fill="#71717a">state machine</text>
+  <rect x="702" y="332" width="132" height="48" rx="7" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.3"/>
+  <text x="768" y="352" text-anchor="middle" font-size="12" font-weight="700" fill="#3730a3">BatchScheduler</text>
+  <text x="768" y="369" text-anchor="middle" font-size="10.5" fill="#71717a">FIFO</text>
+  <rect x="422" y="390" width="200" height="44" rx="7" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.3"/>
+  <text x="522" y="417" text-anchor="middle" font-size="12" font-weight="700" fill="#3730a3">JobStore → Metastore</text>
+  <rect x="632" y="390" width="202" height="44" rx="7" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.3"/>
+  <text x="733" y="417" text-anchor="middle" font-size="12" font-weight="700" fill="#3730a3">TemplateRegistry</text>
+  <text x="422" y="460" font-size="11" font-style="italic" fill="#6b7280">creates per-job workloads via the Kubernetes API →</text>
+  <text x="422" y="485" font-size="11" font-style="italic" fill="#6b7280">datastore is the source of truth — not k8s annotations</text>
+
+  <!-- ===== Model Templates ConfigMap ===== -->
+  <rect x="880" y="200" width="262" height="170" rx="10" fill="#fefce8" stroke="#eab308" stroke-width="1.5"/>
+  <text x="897" y="225" font-size="10.5" font-weight="700" letter-spacing="0.4" fill="#ca8a04">[ CONFIG ] ConfigMap</text>
+  <text x="897" y="250" font-size="15" font-weight="700" fill="#92400e">Model Templates</text>
+  <text x="897" y="280" font-size="12" fill="#374151">TemplateRegistry hot-reload</text>
+  <text x="897" y="300" font-size="12" fill="#374151">engine_args allowlist</text>
+  <text x="897" y="322" font-size="12" fill="#374151">admin-only image / GPU / model</text>
+  <text x="897" y="352" font-size="11" font-style="italic" fill="#6b7280">consumed by Metadata Service</text>
+
+  <!-- ===== Kubernetes API ===== -->
+  <rect x="1170" y="200" width="258" height="170" rx="10" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="1187" y="225" font-size="10.5" font-weight="700" letter-spacing="0.4" fill="#6366f1">[ SERVICE ] managed</text>
+  <text x="1187" y="250" font-size="15" font-weight="700" fill="#3730a3">Kubernetes API</text>
+  <text x="1187" y="280" font-size="12" fill="#374151">create Job</text>
+  <text x="1187" y="300" font-size="12" fill="#374151">create Deployment + Service</text>
+  <text x="1187" y="352" font-size="11" font-style="italic" fill="#6b7280">no separate ResourceManager</text>
+
+  <!-- ===== External GPU runtimes ===== -->
+  <rect x="1508" y="212" width="272" height="142" rx="10" fill="#ffffff" stroke="#a1a1aa" stroke-width="1.4" stroke-dasharray="6 4"/>
+  <text x="1524" y="235" font-size="10" font-weight="700" letter-spacing="0.4" fill="#71717a">[ RUNTIME · Preview ]</text>
+  <text x="1524" y="259" font-size="14.5" font-weight="700" fill="#3f3f46">RunPod GPU Box</text>
+  <text x="1524" y="285" font-size="11.5" fill="#52525b">SSH starts vLLM binary</text>
+  <text x="1524" y="304" font-size="11.5" fill="#52525b">engine bound to localhost</text>
+  <text x="1524" y="335" font-size="10.5" font-style="italic" fill="#71717a">registry key: RunPod</text>
+
+  <rect x="1508" y="372" width="272" height="158" rx="10" fill="#ffffff" stroke="#a1a1aa" stroke-width="1.4" stroke-dasharray="6 4"/>
+  <text x="1524" y="395" font-size="10" font-weight="700" letter-spacing="0.4" fill="#71717a">[ RUNTIME · Preview ]</text>
+  <text x="1524" y="419" font-size="14.5" font-weight="700" fill="#3f3f46">Lambda Cloud VM</text>
+  <text x="1524" y="445" font-size="11.5" fill="#52525b">SSH tunnel + docker run vLLM</text>
+  <text x="1524" y="464" font-size="11.5" fill="#52525b">engine not exposed publicly</text>
+  <text x="1524" y="495" font-size="10.5" font-style="italic" fill="#71717a">registry key: Lambda Cloud</text>
+
+  <!-- ===== Per-Job Execution container ===== -->
+  <rect x="404" y="558" width="1024" height="386" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="7 4"/>
+  <text x="424" y="584" font-size="14" font-weight="700" fill="#475569">Per-Job Execution · two GA paths</text>
+
+  <!-- K8s Job self-host -->
+  <rect x="428" y="598" width="476" height="330" rx="10" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="446" y="622" font-size="10.5" font-weight="700" letter-spacing="0.4" fill="#6366f1">[ JOB · GA ]</text>
+  <text x="446" y="647" font-size="15" font-weight="700" fill="#3730a3">K8s Job · self-host</text>
+  <text x="446" y="669" font-size="11.5" fill="#52525b">single Pod hosts engine + worker</text>
+  <rect x="446" y="684" width="206" height="80" rx="8" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.3"/>
+  <text x="549" y="712" text-anchor="middle" font-size="13" font-weight="700" fill="#3730a3">vLLM engine</text>
+  <text x="549" y="731" text-anchor="middle" font-size="10.5" fill="#71717a">exposes /health</text>
+  <text x="549" y="748" text-anchor="middle" font-size="10.5" fill="#71717a">inference</text>
+  <rect x="678" y="684" width="208" height="80" rx="8" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.3"/>
+  <text x="782" y="708" text-anchor="middle" font-size="13" font-weight="700" fill="#3730a3">BatchWorker</text>
+  <text x="782" y="726" text-anchor="middle" font-size="10.5" fill="#71717a">waits /health → ready</text>
+  <text x="782" y="743" text-anchor="middle" font-size="10.5" fill="#71717a">per-request dispatch</text>
+  <path d="M652,724 H678" fill="none" stroke="#6366f1" stroke-width="1.6" marker-end="url(#mb)"/>
+  <text x="446" y="800" font-size="11.5" fill="#374151">•  worker reads input from Object Storage</text>
+  <text x="446" y="822" font-size="11.5" fill="#374151">•  Redis NX lock per request in Metastore</text>
+  <text x="446" y="844" font-size="11.5" fill="#374151">•  multipart upload of results</text>
+  <text x="446" y="908" font-size="10.5" font-style="italic" fill="#6b7280">registry key: K8s Job = self-host</text>
+
+  <!-- K8s Deployment dispatch -->
+  <rect x="928" y="598" width="476" height="330" rx="10" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="946" y="622" font-size="10.5" font-weight="700" letter-spacing="0.4" fill="#6366f1">[ DEPLOY · GA ]</text>
+  <text x="946" y="647" font-size="15" font-weight="700" fill="#3730a3">K8s Deployment + Service · dispatch</text>
+  <text x="946" y="669" font-size="11.5" fill="#52525b">per-job Deployment, control-plane drives HTTP</text>
+  <rect x="946" y="684" width="206" height="80" rx="8" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.3"/>
+  <text x="1049" y="708" text-anchor="middle" font-size="13" font-weight="700" fill="#3730a3">vLLM engine Pod</text>
+  <text x="1049" y="726" text-anchor="middle" font-size="10.5" fill="#71717a">exposes /health</text>
+  <text x="1049" y="743" text-anchor="middle" font-size="10.5" fill="#71717a">behind ClusterIP Service</text>
+  <rect x="1178" y="684" width="208" height="80" rx="8" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.3"/>
+  <text x="1282" y="708" text-anchor="middle" font-size="13" font-weight="700" fill="#3730a3">Control-plane</text>
+  <text x="1282" y="726" text-anchor="middle" font-size="10.5" fill="#71717a">dispatches requests</text>
+  <text x="1282" y="743" text-anchor="middle" font-size="10.5" fill="#71717a">over HTTP</text>
+  <path d="M1178,724 H1152" fill="none" stroke="#6366f1" stroke-width="1.6" marker-end="url(#mb)"/>
+  <text x="946" y="800" font-size="11.5" fill="#374151">•  Metadata Service waits /health → ready</text>
+  <text x="946" y="822" font-size="11.5" fill="#374151">•  reads input + Redis NX lock in Metastore</text>
+  <text x="946" y="844" font-size="11.5" fill="#374151">•  multipart upload of results</text>
+  <text x="946" y="908" font-size="10.5" font-style="italic" fill="#6b7280">registry key: Deployment = dispatch</text>
+
+  <!-- ===== Managed Storage ===== -->
+  <text x="424" y="1006" font-size="14" font-weight="700" fill="#475569">Managed Storage · external / side-car services</text>
+  <rect x="404" y="1020" width="604" height="140" rx="11" fill="#fefce8" stroke="#eab308" stroke-width="1.5"/>
+  <text x="422" y="1045" font-size="10.5" font-weight="700" letter-spacing="0.4" fill="#ca8a04">[ METASTORE ]</text>
+  <text x="422" y="1070" font-size="14.5" font-weight="700" fill="#92400e">Metastore · Redis (prod default) / S3 / GCS / TOS</text>
+  <text x="422" y="1097" font-size="12" fill="#374151">job state  ·  per-request progress</text>
+  <text x="422" y="1118" font-size="12" fill="#374151">Redis NX lock  ·  TTL</text>
+  <text x="422" y="1146" font-size="11" font-style="italic" fill="#6b7280">written by JobStore + BatchWorker</text>
+
+  <rect x="1036" y="1020" width="604" height="140" rx="11" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="1054" y="1045" font-size="10.5" font-weight="700" letter-spacing="0.4" fill="#7c3aed">[ OBJECT STORE ]</text>
+  <text x="1054" y="1070" font-size="14.5" font-weight="700" fill="#6d28d9">Object Storage · S3 / GCS / TOS</text>
+  <text x="1054" y="1097" font-size="12" fill="#374151">input JSONL (uploaded via /v1/files)</text>
+  <text x="1054" y="1118" font-size="12" fill="#374151">output + error files via multipart upload</text>
+  <text x="1054" y="1146" font-size="11" font-style="italic" fill="#6b7280">source of inputs + sink of outputs</text>
+
+  <!-- ===== FLOW ARROWS ===== -->
+  <!-- 2: client -> metadata -->
+  <path d="M340,236 H402" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#mb)"/>
+  <text x="346" y="227" font-size="10.5" font-weight="600" fill="#2563eb">POST /v1/batches</text>
+  <!-- 8: metadata -> client (return) -->
+  <path d="M402,300 H340" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#mb)"/>
+  <text x="346" y="318" font-size="10" font-weight="600" fill="#2563eb">GET status · download</text>
+
+  <!-- 1: client uploads input JSONL -> object storage (storage write) -->
+  <path d="M340,318 H362 V988 H1040 V1018" fill="none" stroke="#9ca3af" stroke-width="1.7" stroke-dasharray="6 4" marker-end="url(#mg)"/>
+
+  <!-- metadata <-> model templates (consume) -->
+  <path d="M852,332 H878" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#mg)" marker-start="url(#mg)"/>
+
+  <!-- 4: metadata -> k8s api -->
+  <path d="M852,462 H1300 V372" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#mb)"/>
+  <text x="1010" y="454" font-size="10.5" font-weight="600" fill="#2563eb">create Job / Deployment</text>
+  <!-- k8s api -> per-job execution -->
+  <path d="M1240,370 V558" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#mb)"/>
+  <text x="1250" y="540" font-size="10.5" font-weight="600" fill="#2563eb">materialize workloads</text>
+
+  <!-- k8s api -> external GPU (preview, dashed) -->
+  <path d="M1428,288 H1486" fill="none" stroke="#9ca3af" stroke-width="1.7" stroke-dasharray="6 4" marker-end="url(#mg)"/>
+
+  <!-- 6: per-job -> metastore (read input + lock) -->
+  <path d="M636,928 V1018" fill="none" stroke="#9ca3af" stroke-width="1.7" stroke-dasharray="6 4" marker-end="url(#mg)"/>
+  <text x="646" y="978" font-size="10.5" font-weight="600" fill="#6b7280">read input · Redis NX lock · infer</text>
+  <!-- 7: per-job -> object storage (multipart write) -->
+  <path d="M1180,928 V992 H1338 V1018" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#mb)"/>
+  <text x="1196" y="984" font-size="10.5" font-weight="600" fill="#2563eb">multipart upload of results</text>
+
+  <!-- ===== Numbered badges ===== -->
+  <g font-size="12.5" font-weight="700" fill="#ffffff" text-anchor="middle">
+    <circle cx="371" cy="236" r="13" fill="#2563eb"/><text x="371" y="240">2</text>
+    <circle cx="371" cy="300" r="13" fill="#2563eb"/><text x="371" y="304">8</text>
+    <circle cx="362" cy="480" r="13" fill="#2563eb"/><text x="362" y="484">1</text>
+    <circle cx="820" cy="386" r="13" fill="#2563eb"/><text x="820" y="390">3</text>
+    <circle cx="1300" cy="430" r="13" fill="#2563eb"/><text x="1300" y="434">4</text>
+    <circle cx="665" cy="724" r="13" fill="#2563eb"/><text x="665" y="728">5</text>
+    <circle cx="636" cy="975" r="13" fill="#2563eb"/><text x="636" y="979">6</text>
+    <circle cx="1259" cy="992" r="13" fill="#2563eb"/><text x="1259" y="996">7</text>
+  </g>
+
+  <!-- ===== Legend ===== -->
+  <rect x="40" y="372" width="300" height="232" rx="10" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.4"/>
+  <text x="58" y="398" font-size="13" font-weight="700" fill="#111827">Legend</text>
+  <rect x="58" y="412" width="15" height="15" rx="3" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+  <text x="82" y="424" font-size="11.5" fill="#374151">Service / API / Job</text>
+  <rect x="58" y="436" width="15" height="15" rx="3" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.4"/>
+  <text x="82" y="448" font-size="11.5" fill="#374151">Object Storage</text>
+  <rect x="58" y="460" width="15" height="15" rx="3" fill="#fefce8" stroke="#eab308" stroke-width="1.4"/>
+  <text x="82" y="472" font-size="11.5" fill="#374151">Metastore / Config</text>
+  <rect x="58" y="484" width="15" height="15" rx="3" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.4"/>
+  <text x="82" y="496" font-size="11.5" fill="#374151">Client</text>
+  <rect x="58" y="508" width="15" height="15" rx="3" fill="#fafafa" stroke="#a1a1aa" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <text x="82" y="520" font-size="11.5" fill="#374151">External / Third-party (preview)</text>
+  <line x1="58" y1="540" x2="92" y2="540" stroke="#2563eb" stroke-width="2.2"/>
+  <text x="100" y="544" font-size="11.5" fill="#374151">main request flow ①–⑧</text>
+  <line x1="58" y1="562" x2="92" y2="562" stroke="#9ca3af" stroke-width="1.8" stroke-dasharray="6 4"/>
+  <text x="100" y="566" font-size="11.5" fill="#374151">storage read / write</text>
+  <circle cx="66" cy="586" r="8.5" fill="#2563eb"/><text x="66" y="589.5" font-size="9.5" font-weight="700" fill="#ffffff" text-anchor="middle">n</text>
+  <text x="82" y="590" font-size="11.5" fill="#374151">numbered step on flow path</text>
+
+  <!-- ===== Footer ===== -->
+  <line x1="40" y1="1182" x2="1800" y2="1182" stroke="#e5e7eb" stroke-width="1.2"/>
+</svg>
