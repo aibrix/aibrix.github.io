@@ -33,7 +33,7 @@ While model and engine-level optimizations are critical, **system-level orchestr
 
 ## Introducing AIBrix: A Cloud-Native Infrastructure for Large-Scale LLM Serving
 
-To bridge this systme-layer gap, we introduced **AIBrix**—a cloud-native, open-source infrastructure toolkit designed to simplify and optimize LLM deployment. AIBrix operates at the orchestration level, **serving as vLLM's control plane** to enable enterprise-grade reliability, scalability, and cost-effectiveness. AIBrix is also a solid research platform that integrates cutting-edge research insights and features a **co-designed architecture with vLLM** to enhance inference efficiency. Through continuous iteration, AIBrix has evolved across two minor versions, incorporating multiple innovations.
+To bridge this system-layer gap, we introduced **AIBrix**—a cloud-native, open-source infrastructure toolkit designed to simplify and optimize LLM deployment. AIBrix operates at the orchestration level, **serving as vLLM's control plane** to enable enterprise-grade reliability, scalability, and cost-effectiveness. AIBrix is also a solid research platform that integrates cutting-edge research insights and features a **co-designed architecture with vLLM** to enhance inference efficiency. Through continuous iteration, AIBrix has evolved across two minor versions, incorporating multiple innovations.
 
 - High-Density LoRA Management: Cost-Effective Model Adaptation
 - Advanced LLM Gateway and Routing Strategies
@@ -41,7 +41,7 @@ To bridge this systme-layer gap, we introduced **AIBrix**—a cloud-native, open
 - LLM-Specific Autoscaling for Performance Optimization
 - External Distributed KV Cache pool
 - Mix-Grain Multi-Node Inference Orchestration
-- Cost efficient and SLO-driven Heterogenous Serving
+- Cost efficient and SLO-driven Heterogeneous Serving
 - Accelerator Diagnostic and Failure Mockup Tools
 
 
@@ -91,7 +91,7 @@ AIBrix introduces a unified AI runtime and it serves as an essential bridge betw
 
 Autoscaling for LLM inference is challenging due to DCGM metric limitations, non-linear scaling behaviors, and the inadequacy of traditional indicators like QPS or concurrency. Request complexity and input/output size vary widely, often overwhelming systems before autoscalers can react. Additionally, large GPU images and slow model distribution introduce a 2-3 minute delay for new pods to become operational, making rapid scaling inefficient.
 
-AIBrix tackles these issues with LLM-specific autoscaling, replacing Prometheus-based polling with sliding window metric aggregation for real-time load reporting. By leveraging advanced autoscaling algorithms like KPA , APA and our traffic distribution profiling autoscaler, our approach achieves an 11.5% reduction in latency, an 11.4% increase in token throughput, and 33% fewer scaling oscillations compared to native HPA. Looking ahead, we're exploring token-based proactive scaling and SLO-driven autoscaling to further enhance efficiency and responsiveness. 
+AIBrix tackles these issues with LLM-specific autoscaling, replacing Prometheus-based polling with sliding window metric aggregation for real-time load reporting. By leveraging advanced autoscaling algorithms like KPA, APA and our traffic distribution profiling autoscaler, our approach achieves an 11.5% reduction in latency, an 11.4% increase in token throughput, and 33% fewer scaling oscillations compared to native HPA. Looking ahead, we're exploring token-based proactive scaling and SLO-driven autoscaling to further enhance efficiency and responsiveness.
 
 ### Distributed KV Cache Pool
 
@@ -111,11 +111,11 @@ Benchmarking with [Bird Text2SQL](https://bird-bench.github.io/) workloads shows
 
 The release of Llama 3 (405B) and Deepseek-R1 (671B) has driven demand for multi-node inference, yet frameworks like vLLM prioritize parallelism over service-oriented needs like scaling and rolling upgrades, requiring external orchestration. In the landscape of distributed computing, both Kubernetes and Ray offer orchestration capabilities but with trade-offs: Kubernetes operators can be overly complex for fine-grained scheduling, while Ray excels in distributed communication but lacks broader resource management.
 
-We propose a hybrid approach combining Ray for fine-grained application orchestration and Kubernetes for coarse-grained resource management, simplifying operator design while improving flexibility and efficiency. This method is informed by Bytedance's internal experience in hosting Kubernetes and Ray workloads, addressing challenges where workload communication patterns often require frequent orchestration adjustments.
+We propose a hybrid approach combining Ray for fine-grained application orchestration and Kubernetes for coarse-grained resource management, simplifying operator design while improving flexibility and efficiency. This method is informed by ByteDance's internal experience in hosting Kubernetes and Ray workloads, addressing challenges where workload communication patterns often require frequent orchestration adjustments.
 
 ![aibrix-multi-host](/images/aibrix-multi-host.png)
 
-### Cost-efficient and SLO-driven Heterogenous Serving
+### Cost-efficient and SLO-driven Heterogeneous Serving
 
 Literature such as [Melange](https://arxiv.org/abs/2404.14527) and [QLM](https://dl.acm.org/doi/10.1145/3698038.3698523) has figured out that the throughput of LLM serving under specific SLO is a function of (# input tokens, # output tokens, model) under heterogeneous GPUs environments.
 
@@ -166,7 +166,7 @@ AIBrix’s vision aligns with broader efforts to standardize LLM infrastructure,
 >
 > *Robert Nishihara, Co-Founder of Anyscale & Co-Creator of Ray*
 
-## Acknowledge
+## Acknowledgements
 
 Many of our innovative ideas have been inspired by academic research, including works such as [Preble](https://arxiv.org/abs/2407.00023), [Melange](https://arxiv.org/abs/2404.14527), [QLM](https://dl.acm.org/doi/10.1145/3698038.3698523) and [MoonCake](https://arxiv.org/abs/2407.00079). Integrating cutting-edge research into a production-grade system has been an enriching journey, enabling us to transform theoretical concepts into real-world applications. These contributions have significantly influenced our work, and we sincerely appreciate the researchers behind them—thank you! We'd also like to thank the vLLM community for their support in making AIBrix the control plane for vLLM, further strengthening our mission to build scalable and efficient AI infrastructure.
 
