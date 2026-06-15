@@ -240,13 +240,13 @@ Tips:
 6. Issue request: once the engine is up, use the following curl command to issue a request.
 
 ```
-curl localhost:18000/v1/chat/completions \
+curl localhost:8000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model": "Qwen3-32B", "messages": [{"role": "user", "content": "Tell me a joke"}]}'
 ```
 
-8. Stop services: `docker compose -f deploy.yaml stop`.
-9. Cleanup: `docker compose -f deploy.yaml down -v` to remove containers and Redis data.
+7. Stop services: `docker compose -f deploy.yaml stop`.
+8. Cleanup: `docker compose -f deploy.yaml down -v` to remove containers and Redis data.
 
 **Common issues**
 
