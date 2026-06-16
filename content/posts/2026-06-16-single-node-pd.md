@@ -17,8 +17,6 @@ ShowToc: true
 tocopen: true
 ---
 
-# AIBrix KVCache: Optimizing Single-Node P/D Disaggregation
-## Abstract
 As large language models become widely used in multi\-turn conversation, retrieval\-augmented generation, and agentic workloads, memory management during inference is emerging as a key bottleneck for both performance and cost\. KV cache is one of the core optimizations in LLM serving, and its capacity as well as reuse efficiency directly influences time to first token \(TTFT\), time per output token \(TPOT\), and overall system throughput\.
 
 This article introduces the AIBrix KVCache approach and presents an optimization strategy for single\-node Prefill/Decode \(P/D\) disaggregation, targeting GPU environments such as NVIDIA L20 where RDMA\-capable networking is unavailable\. Depending on workload characteristics, the design supports two deployment forms\. For workloads where reusable common\-prefix demand is limited, a direct P/D disaggregation architecture is sufficient\. For workloads such as multi\-turn chat, where a substantial fraction of prompts share reusable prefixes, a KVCache\-centric P/D disaggregation architecture is more effective\.
@@ -42,7 +40,7 @@ The real value of KV cache lies in avoiding redundant computation\. When multipl
 ### KV Cache Offloading
 KV cache offloading moves KV cache from limited GPU memory into larger and lower\-cost storage layers such as CPU memory, SSD, or remote storage\. This makes it possible to go beyond raw GPU\-memory limits\.
 
-![KVCache Offloading Usecases](/images/single-node-pd/prefill-decode-pipeline.png)
+![KVCache Offloading Use Cases](/images/single-node-pd/kvcache-offloading-usecases.png)
 
 In agentic AI workflows, the agent core and the LLM repeatedly interact across multiple turns: parsing intent, generating plans, retrieving information, integrating results, and iterating until the user goal is satisfied\. Because variations of the same prompt are processed again and again, repeated Prefill becomes increasingly inefficient as the prompt grows\. Reusing KV cache from previous turns helps avoid that redundant work and keeps latency under control during long reasoning chains\.
 
@@ -69,7 +67,7 @@ Many real production workloads share several common characteristics: long multi\
 
 At the same time, many deployments on NVIDIA L20\-class hardware face practical limitations: the absence of RDMA high\-speed networking, the absence of NVLink, and relatively limited HBM capacity\. These constraints make cross\-node P/D disaggregation less attractive and make single\-node optimization especially important\.
 
-Many extensive explorations and engineering optimizations have been conducted to overcome the various limitations of the L20 platform and unlock greater performance and cost efficiency in production deployments\. For example, a multi\-node Prefill/Decode \(P/D\) disaggregated deployment has been evaluated using the Qwen3\-32B\-FP8 model with the vLLM 0\.11\.0 engine in a TP4 configuration\. The experiments showed that, because most L20 deployments lack RDMA\-capable high\-speed networking, cross\-node KVCache transfer becomes a significant bottleneck\. As a result, the Time to First Token \(TTFT\) reached 11,494 ms, far exceeding the 1,500 ms achieved by the single\-node colocated deployment and failing to satisfy the service SLO\.
+Many extensive explorations and engineering optimizations have been conducted to overcome the various limitations of the L20 platform and unlock greater performance and cost efficiency in production deployments\. For example, a multi\-node Prefill/Decode \(P/D\) disaggregated deployment has been evaluated using the Qwen3\-32B\-FP8 model with the vLLM v0\.11\.0 engine in a TP4 configuration\. The experiments showed that, because most L20 deployments lack RDMA\-capable high\-speed networking, cross\-node KVCache transfer becomes a significant bottleneck\. As a result, the Time to First Token \(TTFT\) reached 11,494 ms, far exceeding the 1,500 ms achieved by the single\-node colocated deployment and failing to satisfy the service SLO\.
 
 In contrast, the single\-node P/D disaggregation deployment demonstrated substantial benefits in production\. With the same total GPU count and unchanged P99 end\-to\-end latency, system throughput \(QPS\) increased by more than 40%\. Alternatively, while maintaining the same QPS and P99 latency, GPU usage could be reduced by more than 40%, saving approximately 1,600 L20 GPUs during peak hours and around 1,000 L20 GPUs on a daily weighted average\. These results clearly demonstrate that single\-node P/D disaggregation is a significantly more cost\-efficient deployment strategy than traditional colocated P/D execution on L20 platforms\.
 
@@ -100,7 +98,7 @@ The scheduler must maintain explicit mappings between sessions and Prefill insta
 2. **Load imbalance\.**
 Cache affinity constraints may overload certain Prefill instances while leaving others underutilized, resulting in poor resource utilization\.
 
-To address these L20\-specific challenges in a systematic manner, we propose **AIBrix KVCache** architecture\.
+To address these L20\-specific challenges in a systematic manner, we propose the **AIBrix KVCache** architecture\.
 
 ---
 ## AIBrix KVCache Architecture
@@ -113,7 +111,7 @@ This mode mainly addresses poor native\-engine adaptation on L20\-like hardware\
 ### Form 2: KVCache-Centric P/D Disaggregation
 This form is intended for workloads where reusable prefixes matter, including multi\-turn dialogue, RAG, and agentic workflows, and where throughput and cost efficiency are major priorities\.
 
-The AIBrix KVCache\-centric P/D disaggregation architecture adopts PrisKV as the in\-node data\-plane hub, providing unified management and high\-performance transport for KVCache in P/D\-disaggregated deployments\.
+The AIBrix KVCache\-centric P/D disaggregation architecture adopts PrisKV as the intra\-node data\-plane hub, providing unified management and high\-performance transport for KVCache in P/D\-disaggregated deployments\.
 
 PrisKV is a hierarchical KVCache storage system purpose\-built for LLM inference services \(see the [PrisKV Blog](https://aibrix.github.io/posts/2025-11-26-priskv-intro/) for details\)\. It provides a zero\-copy data path, full\-stack communication support across TCP, shared memory, and RDMA, as well as comprehensive KVCache lifecycle management\. Its primary objective is to preserve the benefits of P/D disaggregation while enabling cross\-request KVCache reuse and decoupling the data\-path dependency between Prefill and Decode engine instances\.
 
@@ -171,7 +169,7 @@ In deployment shapes such as 3P1D, the architecture allows multiple Prefill inst
 |GPU|NVIDIA L20 \(48 GB HBM\)|
 |Model|Qwen3\-32B\-FP8|
 |Deployment form|Single\-node 1P1D \(TP=4\), 3P1D \(TP=2\)|
-|Engine|vLLM v0\.14\.0|
+|Engine|vLLM v0\.11\.0|
 ### Random-Load Benchmark
 **Test Configuration\.**
 The evaluation was conducted using the Qwen3\-32B\-FP8 model in a single\-node 1P1D setup with TP=4\. The workload configuration was as follows: `input_len=6000`, `output_len=80`, `concurrency=2`, and `RPS=16`\.
@@ -218,8 +216,6 @@ The prompt is structured into three layers:
 - **Per\-Turn Input:** newly generated input for each conversation turn\.
 
 In this experiment, the E2E latency SLO was set to approximately 5 seconds\. We compared the maximum throughput \(RPS\) that different schemes can sustain while satisfying the same latency constraint\. Under the same production traffic, higher throughput means that each GPU can serve more requests, thereby reducing the number of GPUs required\. Based on the experimental results, we further quantify the throughput speedup of each scheme relative to the baseline and estimate the corresponding GPU resource savings under the same workload\.
-
-### NVIDIA AIPerf Benchmark
 
 **Test Configuration\.**
 We used NVIDIA AIPerf User\-Centric Timing to simulate a multi\-turn conversation workload\. The configuration was as follows: 10 concurrent users \(`--num-users 10`\), an average of 4 conversation turns per user \(`--session-turns-mean 4`\), a 3,000\-token shared system prompt \(`--shared-system-prompt-length 3000`\), a 6,000\-token user context prompt \(`--user-context-prompt-length 6000`\), 256 tokens of per\-turn input \(`--synthetic-input-tokens-mean 256`\), and an output length of 80 tokens \(`--osl 80`\)\. The model was Qwen3\-32B\-FP8\. The AIBrix deployment used a 3P1D topology with random routing, while the baseline deployment used four replicas with random routing\.
