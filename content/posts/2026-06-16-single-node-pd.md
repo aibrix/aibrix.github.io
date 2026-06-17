@@ -1,6 +1,6 @@
 ---
-date: '2026-06-16T12:00:00-00:00'
-draft: true
+date: '2026-06-16T14:00:00-00:00'
+draft: false
 title: 'AIBrix KVCache: Optimizing Single-Node P/D Disaggregation'
 author: ["The AIBrix Team"]
 
