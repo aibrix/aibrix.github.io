@@ -1,0 +1,74 @@
+<svg viewBox="0 0 1200 820" xmlns="http://www.w3.org/2000/svg" role="img" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif">
+  <title>Should You Self-Host Batch Inference? — decision tree</title>
+  <desc>For text LLM batch inference: if it needs frontier quality, pay a closed API; otherwise low-volume work whose data can leave uses a cheap first-party API, while high-volume / in-house / private workloads self-host on AIBrix.</desc>
+  <defs>
+    <marker id="ab" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+    <marker id="ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+  </defs>
+
+  <text x="40" y="44" font-size="26" font-weight="700" fill="#111827">Should You Self-Host Batch Inference?</text>
+  <text x="40" y="70" font-size="14" fill="#6b7280">A decision tree — text LLM batch inference</text>
+  <line x1="40" y1="88" x2="1160" y2="88" stroke="#e5e7eb" stroke-width="1.5"/>
+
+  <rect x="40" y="104" width="16" height="16" rx="3" fill="#ffffff" stroke="#2563eb" stroke-width="1.6"/>
+  <text x="64" y="116" font-size="12.5" fill="#374151">Decision</text>
+  <rect x="170" y="104" width="16" height="16" rx="3" fill="#ffffff" stroke="#16a34a" stroke-width="1.6"/>
+  <text x="194" y="116" font-size="12.5" fill="#374151">Self-host (recommended)</text>
+  <rect x="410" y="104" width="16" height="16" rx="3" fill="#ffffff" stroke="#dc2626" stroke-width="1.6"/>
+  <text x="434" y="116" font-size="12.5" fill="#374151">Pay closed frontier API</text>
+  <rect x="630" y="104" width="16" height="16" rx="3" fill="#ffffff" stroke="#2563eb" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="654" y="116" font-size="12.5" fill="#374151">First-party API (cheap)</text>
+  <line x1="40" y1="136" x2="1160" y2="136" stroke="#e5e7eb" stroke-width="1.5"/>
+
+  <!-- Q1: frontier quality -->
+  <rect x="440" y="170" width="320" height="92" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="1.6"/>
+  <text x="456" y="192" font-size="11" font-weight="700" letter-spacing="0.5" fill="#2563eb">Q1 · QUALITY TIER</text>
+  <text x="456" y="216" font-size="16" font-weight="700" fill="#111827">Does it need FRONTIER quality?</text>
+  <text x="456" y="240" font-size="12.5" fill="#6b7280">Fable 5 / Opus 4.8 / GPT-5.5</text>
+
+  <path d="M760,210 H1000 V250" fill="none" stroke="#dc2626" stroke-width="1.8" marker-end="url(#ar)"/>
+  <text x="852" y="202" font-size="12" font-weight="700" fill="#dc2626">YES</text>
+  <path d="M600,262 V360" fill="none" stroke="#2563eb" stroke-width="1.8" marker-end="url(#ab)"/>
+  <text x="614" y="316" font-size="12" font-weight="700" fill="#2563eb">NO — workhorse / efficient</text>
+
+  <!-- Result A: frontier API -->
+  <rect x="840" y="250" width="320" height="150" rx="8" fill="#ffffff" stroke="#dc2626" stroke-width="1.8"/>
+  <text x="856" y="274" font-size="11" font-weight="700" letter-spacing="0.5" fill="#dc2626">RESULT A · FRONTIER</text>
+  <text x="856" y="306" font-size="17" font-weight="700" fill="#111827">Pay for a closed frontier API</text>
+  <text x="856" y="332" font-size="13" fill="#374151">No self-hostable open peer.</text>
+  <text x="856" y="362" font-size="12.5" fill="#6b7280">Fable 5 / Opus 4.8 / GPT-5.5</text>
+  <text x="856" y="380" font-size="12.5" fill="#6b7280">— no cheap or open substitute.</text>
+
+  <!-- Q2: volume & data -->
+  <rect x="440" y="360" width="320" height="92" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="1.6"/>
+  <text x="456" y="382" font-size="11" font-weight="700" letter-spacing="0.5" fill="#2563eb">Q2 · VOLUME &amp; DATA LOCALITY</text>
+  <text x="456" y="406" font-size="15.5" font-weight="700" fill="#111827">Low volume AND data can leave?</text>
+  <text x="456" y="426" font-size="11.5" fill="#6b7280">i.e. not enough scale, no privacy / compliance lock-in</text>
+
+  <path d="M440,406 H220 V470" fill="none" stroke="#2563eb" stroke-width="1.8" stroke-dasharray="5 3" marker-end="url(#ab)"/>
+  <text x="250" y="398" font-size="12" font-weight="700" fill="#2563eb">YES</text>
+  <path d="M600,452 V560" fill="none" stroke="#16a34a" stroke-width="2" marker-end="url(#ag)"/>
+  <text x="614" y="510" font-size="12" font-weight="700" fill="#16a34a">NO — high volume · in-house data · private model</text>
+
+  <!-- Result B: first-party API -->
+  <rect x="40" y="470" width="360" height="160" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="1.8" stroke-dasharray="6 4"/>
+  <text x="56" y="494" font-size="11" font-weight="700" letter-spacing="0.5" fill="#2563eb">RESULT B · CHEAP MANAGED</text>
+  <text x="56" y="526" font-size="17" font-weight="700" fill="#111827">Use the cheap first-party API</text>
+  <text x="56" y="552" font-size="13" fill="#374151">DeepSeek / Qwen  ·  $0.14–$0.87 / 1M</text>
+  <text x="56" y="582" font-size="12" fill="#6b7280">Not enough volume to amortize a rented GPU</text>
+  <text x="56" y="600" font-size="12" fill="#6b7280">— and you won't beat their floor anyway.</text>
+
+  <!-- Result C: self-host on AIBrix (primary) -->
+  <rect x="440" y="560" width="540" height="200" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2.2"/>
+  <text x="460" y="586" font-size="12" font-weight="700" letter-spacing="0.5" fill="#16a34a">RESULT C · PRIMARY RECOMMENDATION</text>
+  <text x="460" y="624" font-size="24" font-weight="800" fill="#15803d">SELF-HOST ON AIBRIX</text>
+  <line x1="460" y1="642" x2="960" y2="642" stroke="#bbf7d0" stroke-width="1.5"/>
+  <text x="460" y="668" font-size="13.5" font-weight="700" fill="#111827">Why it wins at this branch:</text>
+  <text x="460" y="694" font-size="13" fill="#374151">•  Clear the third-party-host (Fireworks / DeepInfra) 3–4× markup</text>
+  <text x="460" y="718" font-size="13" fill="#374151">•  Measured ~$0.10–$0.18 / 1M at high utilization</text>
+  <text x="460" y="742" font-size="13" fill="#374151">•  Keep data in-house  ·  run private / fine-tuned models</text>
+
+  <line x1="40" y1="792" x2="1160" y2="792" stroke="#e5e7eb" stroke-width="1.5"/>
+  <text x="40" y="812" font-size="11.5" fill="#9ca3af">Decision tree: quality tier → volume &amp; data locality → deployment</text>
+</svg>
