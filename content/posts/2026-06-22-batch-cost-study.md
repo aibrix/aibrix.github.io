@@ -1,6 +1,6 @@
 ---
 date: '2026-06-22T12:00:00-00:00'
-draft: true
+draft: false
 title: 'Should You Self-Host Batch Inference? An Honest Cost Breakdown'
 author: ["The AIBrix Team"]
 
