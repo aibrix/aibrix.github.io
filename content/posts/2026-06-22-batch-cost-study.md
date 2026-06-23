@@ -31,20 +31,20 @@ It comes down to three things — matching capability, pricing the managed optio
 
 ## Match capability, not model names
 
-You can't compare prices across models of different quality. So we tier models by a benchmark basket — the **[Artificial Analysis Intelligence Index](https://artificialanalysis.ai/leaderboards/models)** (**AA-II**) as the spine, cross-checked against GPQA, SWE-bench Verified, LiveCodeBench, and LMArena — and compare **price within a tier**. AA-II is a single ~0–100 score that rolls reasoning, math, coding, and knowledge benchmarks into one "how capable" number (higher = smarter); the tier bands below are AA-II **v4.1** ranges (as of mid-June 2026):
+You can't compare prices across models of different quality. So we tier models by a benchmark basket — the **[Artificial Analysis Intelligence Index](https://artificialanalysis.ai/leaderboards/models)** (**AA-II**) as the spine, cross-checked against GPQA, SWE-bench Verified, LiveCodeBench, and LMArena — and compare **price within a tier**. AA-II is a single ≈0–100 score that rolls reasoning, math, coding, and knowledge benchmarks into one "how capable" number (higher = smarter); the tier bands below are AA-II **v4.1** ranges (as of mid-June 2026):
 
 | Tier | Closed (API-only) | Best **self-hostable** open peer | Verdict |
 |---|---|---|---|
-| **Frontier** (AA-II ~55–60) | Claude Fable 5, Opus 4.8, GPT-5.5 | **None reaches it** | **Concede — pay the API** |
-| **Workhorse** (AA-II ~43–51) | Gemini 3.5 Flash, Claude Sonnet 4.6, Gemini 3.1 Pro | **GLM-5.2**, DeepSeek V4-Pro, MiniMax-M3 | **Open leads** |
-| **Efficient** (AA-II ~24–42) | Claude Haiku 4.5, Gemini 3.1 Flash-Lite | **Qwen3.6-27B** | **Open wins** |
+| **Frontier** (AA-II ≈55–60) | Claude Fable 5, Opus 4.8, GPT-5.5 | **None reaches it** | **Concede — pay the API** |
+| **Workhorse** (AA-II ≈43–51) | Gemini 3.5 Flash, Claude Sonnet 4.6, Gemini 3.1 Pro | **GLM-5.2**, DeepSeek V4-Pro, MiniMax-M3 | **Open leads** |
+| **Efficient** (AA-II ≈24–42) | Claude Haiku 4.5, Gemini 3.1 Flash-Lite | **Qwen3.6-27B** | **Open wins** |
 
 ![Artificial Analysis Intelligence Index v4.1, bars colored by license: proprietary models (black) hold the frontier, the top open model GLM-5.2 leads the workhorse tier, and open-weight models (blue) win the efficient tier](/images/batch-cost-study/artificial-analysis-intelligence-index-v4.1.png)
-*Artificial Analysis Intelligence Index (v4.1), colored by license — **black = proprietary, blue = open-weight** (dark blue = open but commercial-use-restricted). The coloring *is* the thesis. The **frontier is all black**: Claude Fable 5 (60), Opus 4.8 (56), GPT-5.5 (55) — no open model reaches it. But right below it, the top open model — **GLM-5.2 (51, MIT)** — edges Gemini 3.5 Flash (50) to lead the workhorse tier, only ~4 points off the frontier floor. And at the **efficient** end the colors flip again: **Qwen3.6-27B (37) sits above Claude Haiku 4.5 (30)** — open wins the tier most batch jobs live in. Source: [Artificial Analysis](https://artificialanalysis.ai/leaderboards/models).*
+*Artificial Analysis Intelligence Index (v4.1), colored by license — **black = proprietary, blue = open-weight** (dark blue = open but commercial-use-restricted). The coloring *is* the thesis. The **frontier is all black**: Claude Fable 5 (60), Opus 4.8 (56), GPT-5.5 (55) — no open model reaches it. But right below it, the top open model — **GLM-5.2 (51, MIT)** — edges Gemini 3.5 Flash (50) to lead the workhorse tier, only ≈4 points off the frontier floor. And at the **efficient** end the colors flip again: **Qwen3.6-27B (37) sits above Claude Haiku 4.5 (30)** — open wins the tier most batch jobs live in. Source: [Artificial Analysis](https://artificialanalysis.ai/leaderboards/models).*
 
 Three honest caveats, because the landscape moved and the details matter:
 
-- **The frontier is closed-only.** No *self-hostable* open model matches the closed frontier — **Claude Fable 5, Opus 4.8, GPT-5.5** — today. The best deployable open model, **GLM-5.2**, now lands just ~4 AA-II points below the frontier floor (51 vs GPT-5.5's 55) — close, but not there — and the gap is *larger* on independently-verified agentic coding (Opus 4.8 posts a third-party-verified 88.6% on SWE-bench Verified; the open models' competing 80%+ figures are vendor self-reported). If your batch job needs frontier quality, **pay for the frontier** — there's no open or budget substitute.
+- **The frontier is closed-only.** No *self-hostable* open model matches the closed frontier — **Claude Fable 5, Opus 4.8, GPT-5.5** — today. The best deployable open model, **GLM-5.2**, now lands just ≈4 AA-II points below the frontier floor (51 vs GPT-5.5's 55) — close, but not there — and the gap is *larger* on independently-verified agentic coding (Opus 4.8 posts a third-party-verified 88.6% on SWE-bench Verified; the open models' competing 80%+ figures are vendor self-reported). If your batch job needs frontier quality, **pay for the frontier** — there's no open or budget substitute.
 - **Workhorse is parity — if not an open win.** The top open model, **GLM-5.2 (51)**, actually *edges* the best closed workhorse model, Gemini 3.5 Flash (50), and clears Claude Sonnet 4.6 (47) and Gemini 3.1 Pro (46); DeepSeek V4-Pro and MiniMax-M3 (both 44) sit a notch behind. These are real, aggregate-verified results — this is where self-hosting credibly replaces, and can even beat, a mid-tier API.
 - **Efficient is where open pulls ahead.** **Qwen3.6-27B** (a 27B *dense* model, trivial to self-host) beats Claude Haiku 4.5 on the aggregate index — **37 vs 30 AA-II**, both in reasoning mode for an apples-to-apples read — in a package small enough to run one-per-GPU. *Most batch workloads — classification, extraction, summarization, tagging — live in this tier.* This is the strongest self-hosting pitch: **better quality than the closed efficient tier, at a fraction of the cost.**
 
@@ -67,17 +67,17 @@ Within a tier, managed options span two orders of magnitude:
 | Workhorse | Claude Sonnet 4.6 | 3.00 | 15.00 | closed workhorse |
 | Workhorse | **GLM-5.2** (first-party) | **1.40** | **4.40** | open weights (MIT) — the workhorse leader |
 | Workhorse | **DeepSeek V4-Pro** (first-party) | **0.435** | **0.87** | open weights, first-party API |
-| Workhorse | DeepSeek V4-Pro **on Fireworks/DeepInfra** | **1.74** | **3.48** | **same weights, ~4× DeepSeek's own price** |
+| Workhorse | DeepSeek V4-Pro **on Fireworks/DeepInfra** | **1.74** | **3.48** | **same weights, ≈4× DeepSeek's own price** |
 | Efficient | Claude Haiku 4.5 | 1.00 | 5.00 | closed efficient |
 | Efficient | Gemini 3.1 Flash-Lite | 0.25 | 1.50 | cheapest closed efficient |
-| Efficient | **DeepSeek V4-Flash** | **0.14** | **0.28** | open weights — ~18× cheaper output than Haiku, cheapest credible row |
+| Efficient | **DeepSeek V4-Flash** | **0.14** | **0.28** | open weights — ≈18× cheaper output than Haiku, cheapest credible row |
 
 *Batch endpoints (OpenAI, Anthropic, Google) take another **−50%** on both input and output, and most other providers offer comparable batch or off-peak discounts; prompt caching takes up to **−90%** on cached input.*
 
 Two findings reshape the whole comparison:
 
 1. **The model makers' own first-party APIs are the real price floor**, not the premium closed labs — 5–35× cheaper, biggest gap on output tokens (which dominate real bills).
-2. **Third-party model hosts charge ~3–4× the first-party price for *identical* weights** (DeepSeek V4-Pro is $1.74/$3.48 on Fireworks vs $0.435/$0.87 from DeepSeek itself). You're paying for managed infrastructure, SLAs, and support.
+2. **Third-party model hosts charge ≈3–4× the first-party price for *identical* weights** (DeepSeek V4-Pro is $1.74/$3.48 on Fireworks vs $0.435/$0.87 from DeepSeek itself). You're paying for managed infrastructure, SLAs, and support.
 
 This is the crux for self-hosting: **you're not really competing with DeepSeek's $0.43 floor — you're competing with the $1.74 third-party-host markup, and with the constraint that some workloads simply cannot send data to an external API at all.** That's the gap AIBrix self-hosting fills.
 
@@ -100,22 +100,22 @@ Throughput swings ±30% with engine version, quant, and sequence mix — so ever
 
 | Model | Config | Throughput (tok/s) | Self-host $/1M (≈U90) |
 |---|---|--:|--:|
-| Qwen3.6-27B | 1× H100, FP8 (native) | ~10,300 | **~$0.10** ← cheapest |
-| Qwen3.6-27B | 1× A100, FP8 (dequantized — no Ampere FP8) | ~2,400 | ~$0.18 |
+| Qwen3.6-27B | 1× H100, FP8 (native) | ≈10,300 | **≈$0.10** ← cheapest |
+| Qwen3.6-27B | 1× A100, FP8 (dequantized — no Ampere FP8) | ≈2,400 | ≈$0.18 |
 
-At **high utilization** the measured floor is **~$0.10/1M on the H100** — *low cents*, well under the third-party hosts and even within range of the cheap first-party APIs. **The GPU you pick is itself a big cost lever — and not in the obvious direction:** the H100 costs ~2.4× the A100 per hour, yet comes out **cheaper per token** (~$0.10 vs ~$0.18), because it's ~4× faster *and* has native FP8 — the A100 (Ampere) has no FP8 tensor cores, so the same checkpoint dequantizes and runs ~4× slower. Match the card to the model and quant, and the "expensive" GPU is often the cheap one. The real catch is the **"at high utilization"** qualifier — that, not cold start, decides self-host vs. managed, so we lay it out as a decision tree below.
+At **high utilization** the measured floor is **≈$0.10/1M on the H100** — *low cents*, well under the third-party hosts and even within range of the cheap first-party APIs. **The GPU you pick is itself a big cost lever — and not in the obvious direction:** the H100 costs ≈2.4× the A100 per hour, yet comes out **cheaper per token** (≈$0.10 vs ≈$0.18), because it's ≈4× faster *and* has native FP8 — the A100 (Ampere) has no FP8 tensor cores, so the same checkpoint dequantizes and runs ≈4× slower. Match the card to the model and quant, and the "expensive" GPU is often the cheap one. The real catch is the **"at high utilization"** qualifier — that, not cold start, decides self-host vs. managed, so we lay it out as a decision tree below.
 
 ## A quick note on cold start
 
 When you self-host, the GPU meter runs during model load + engine init before the first token — about a minute for a 27B, a few minutes for a 70B-class model on several GPUs. A managed API hides this cost; you pay it explicitly.
 
-For **realistic batch — jobs that run an hour or more — it's a rounding error**: a 3-minute warm-up on a 60-minute job is ~5%, and on a fleet that keeps engines warm it amortizes away entirely. Cold start only dominates if you boot a fresh cluster for one tiny job, which isn't how batch runs — so **we assume long-running, high-utilization execution and don't dwell on it.** (A genuinely tiny, sporadic workload is itself a signal to use a managed API — see the decision tree.)
+For **realistic batch — jobs that run an hour or more — it's a rounding error**: a 3-minute warm-up on a 60-minute job is ≈5%, and on a fleet that keeps engines warm it amortizes away entirely. Cold start only dominates if you boot a fresh cluster for one tiny job, which isn't how batch runs — so **we assume long-running, high-utilization execution and don't dwell on it.** (A genuinely tiny, sporadic workload is itself a signal to use a managed API — see the decision tree.)
 
 ## Putting it together — the decision tree
 
 ![Decision tree — Should you self-host batch inference? Q1: does it need frontier quality? → yes, pay a closed frontier API (no open substitute). Q2: low volume and data can leave? → yes, use the cheap first-party API; otherwise (high volume, in-house data, or a private model) → self-host on AIBrix](/images/batch-cost-study/aibrix-batch-decision-tree.svg)
 
-The crossover point — **the single number that answers "should I self-host?"** — is a *utilization*, and our runs pin it: the self-hosted H100 beats the **closed** efficient API (Haiku 4.5) above only **~10% GPU utilization** (a trivially low bar), but merely **ties** the cheapest **first-party** open API (DeepSeek V4-Flash) even at full saturation. Translation: against a closed API, self-hosting wins almost immediately; against the dirt-cheap first-party APIs it's a price *tie*, so you self-host for data control, private models, or scale — not to shave the last cent.
+The crossover point — **the single number that answers "should I self-host?"** — is a *utilization*, and our runs pin it: the self-hosted H100 beats the **closed** efficient API (Haiku 4.5) above only **≈10% GPU utilization** (a trivially low bar), but merely **ties** the cheapest **first-party** open API (DeepSeek V4-Flash) even at full saturation. Translation: against a closed API, self-hosting wins almost immediately; against the dirt-cheap first-party APIs it's a price *tie*, so you self-host for data control, private models, or scale — not to shave the last cent.
 
 ## What AIBrix Batch actually is
 
@@ -135,7 +135,7 @@ The *cost economics* above aren't unique to AIBrix — they're the economics of 
 
 ## A worked example — 20K requests, end to end
 
-Make it concrete. You have **20,000 chat-completion requests** to run offline — pull structured JSON from a document archive, ~800 in / 150 out tokens each (≈ **19M tokens**) — which fits comfortably in a *single* AIBrix batch (the per-batch ceiling is 50,000 requests). It's a workhorse/efficient job, so run **Qwen3.6-27B on a single H100**. Submission is the stock OpenAI Batch flow — only the `base_url` changes:
+Make it concrete. You have **20,000 chat-completion requests** to run offline — pull structured JSON from a document archive, ≈800 in / 150 out tokens each (≈ **19M tokens**) — which fits comfortably in a *single* AIBrix batch (the per-batch ceiling is 50,000 requests). It's a workhorse/efficient job, so run **Qwen3.6-27B on a single H100**. Submission is the stock OpenAI Batch flow — only the `base_url` changes:
 
 ```python
 from openai import OpenAI
@@ -151,13 +151,13 @@ batch = client.batches.create(
 
 One H100 stays busy for the whole job — high utilization, the regime where the self-host floor is real — and it's a single K8s Job, not a cluster. The cost, against the alternatives you'd realistically reach for (self-host figure computed from the measured throughput above):
 
-| This job (~19M tokens) | Cost |
+| This job (≈19M tokens) | Cost |
 |---|--:|
-| **Self-host Qwen3.6-27B · 1× H100 (AIBrix)** — AA-II 37 | **~$1.7** (from measured throughput) |
-| Claude Haiku 4.5 — closed efficient API, *lower* quality (AA-II 30) | ~$16 |
-| DeepSeek V4-Flash — cheapest managed (open), off-peak | ~$1.5 |
+| **Self-host Qwen3.6-27B · 1× H100 (AIBrix)** — AA-II 37 | **≈$1.7** (from measured throughput) |
+| Claude Haiku 4.5 — closed efficient API, *lower* quality (AA-II 30) | ≈$16 |
+| DeepSeek V4-Flash — cheapest managed (open), off-peak | ≈$1.5 |
 
-Self-hosting Qwen3.6-27B runs a *better* model than the closed efficient API — **AA-II 37 vs Claude Haiku 4.5's 30** — at **~9× less** (**~$1.7 vs ~$16**), and your data never leaves. At the measured throughput above, this job is ~31 minutes on one H100, so its cost is essentially `0.5 hr × $3.29` (we measured the tokens/sec at saturation; the job total is that rate × volume, not a separately timed 20K run). *Honest counterpoint:* the cheapest managed open API (DeepSeek V4-Flash ≈ **$1.5**) is now a near-tie — so the case for self-hosting here is **data control, a private / fine-tuned model, or sustained scale**, exactly as the decision tree says.
+Self-hosting Qwen3.6-27B runs a *better* model than the closed efficient API — **AA-II 37 vs Claude Haiku 4.5's 30** — at **≈9× less** (**≈$1.7 vs ≈$16**), and your data never leaves. At the measured throughput above, this job is ≈31 minutes on one H100, so its cost is essentially `0.5 hr × $3.29` (we measured the tokens/sec at saturation; the job total is that rate × volume, not a separately timed 20K run). *Honest counterpoint:* the cheapest managed open API (DeepSeek V4-Flash ≈ **$1.5**) is now a near-tie — so the case for self-hosting here is **data control, a private / fine-tuned model, or sustained scale**, exactly as the decision tree says.
 
 **And the self-host floor keeps dropping.** The $/token isn't static — vLLM gets faster at batch every release. On top of that, AIBrix's **gateway routing + StormService disaggregation + KV offloading** stack further still (all *excluded* from the conservative single-machine numbers here — a follow-up post measures them). So the gap versus a managed API widens over time, not narrows.
 
