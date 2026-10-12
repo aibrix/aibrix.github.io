@@ -1,6 +1,6 @@
 baseURL: "https://aibrix.github.io/"
 title: AIBrix Blogs
-paginate: 5
+paginate: 10
 theme: PaperMod
 
 enableRobotsTXT: true
