@@ -19,7 +19,7 @@ tocopen: true
 
 Model hubs such as Hugging Face let anyone try a model from its page. Model marketplaces list hundreds of fine-tuned and specialist models side by side. Short-video apps offer AI effects, each backed by a model of its own. These services host a long tail of models, and their traffic shows it. A model gets a burst of requests when someone opens its page or picks its effect, and it sits almost idle the rest of the time.
 
-Autoscaling does not fit this pattern well. Without scale-to-zero, every model holds at least one GPU around the clock, mostly to wait. With scale-to-zero, the first request after a quiet spell waits for a cold start. The Pod has to be scheduled, the image pulled, the weights loaded, and the engine compiled and warmed up. That takes tens of seconds to minutes, which is too long for someone who just clicked 'try'.
+Autoscaling does not fit this pattern well. Without scale-to-zero, every model holds at least one GPU around the clock, mostly to wait. With scale-to-zero, the first request after a quiet spell waits for a cold start. The Pod has to be scheduled, the image pulled, the weights loaded, and the engine compiled and warmed up. That takes tens of seconds to minutes, which is too long for someone who just clicked “try”.
 
 GPU sharing is not a new idea. Time-slicing, NVIDIA MPS, MIG and vGPU all let several workloads use one GPU, and each makes a trade-off. Time-slicing makes processes take turns on the whole GPU, which costs context switches and leaves each process free to take memory that another needs. MPS runs kernels from several processes at once, but a fatal fault in one of them can take down the others on the same GPU. MIG gives each slice hardware isolation, but slices come in fixed sizes, only some GPUs support it, and changing the layout means draining the GPU. vGPU divides a GPU into fixed profiles for virtual machines. All of these work below the inference engine. They see processes and memory, not models, weights or KV cache, so all they can do is cut a GPU into slices. They cannot give an idle model's KV cache to a busier neighbour, or move an idle model's weights out of the way.
 
@@ -51,7 +51,7 @@ The **ModelClaim controller** picks a Pod for each claim and asks the runtime on
 
 The **AIBrix gateway** routes OpenAI-compatible requests by model name to the engine that the controller has published for that model. While a model is starting, asleep, or waiting for room, the gateway returns HTTP 503 with a `Retry-After` header. When a request arrives for a sleeping model, the gateway asks the controller to wake it.
 
-ModelClaim supports only vLLM, since SGLang needs additional integration. Each claim currently runs one engine.
+ModelClaim supports only vLLM; SGLang is not supported yet. Each claim currently runs one engine.
 
 The figures in this post show each model's share of GPU memory in three shades of its own colour, as the table below explains.
 
@@ -189,11 +189,11 @@ The whole run is also available as a single video.
 
 ## Try It
 
-ModelClaim is experimental. The steps below use AIBrix v0.8.0, whose standard installation includes ModelClaim. They also use the runtime image `aibrix/kvcached-runtime:6608436f37c8a936c53a6eb40b98982c7aeb9b06`, which runs vLLM 0.30.0 and kvcached 0.1.6 on CUDA 13.0. The user guide [[3]](https://aibrix.readthedocs.io/latest/features/model-serving/model-claim.html) covers installation, configuration and failure handling. Once the control plane is installed, take the warm-pool sample from the v0.8.0 tag of the AIBrix repository, set its image to the runtime image above, and create the pool. For the H20 example below, set the sample's Deployment name to `warm-runtime-pool-h20` and use `h20-pool-a` consistently for its pool labels and selectors before applying it. These names are only labels, and the sample also runs on other NVIDIA GPUs:
+ModelClaim is experimental. The steps below use AIBrix v0.8.0, whose standard installation includes ModelClaim. They also use the runtime image `aibrix/kvcached-runtime:6608436f37c8a936c53a6eb40b98982c7aeb9b06`, which runs vLLM 0.30.0 and kvcached 0.1.6 on CUDA 13.0. The user guide [[3]](https://aibrix.readthedocs.io/latest/features/model-serving/model-claim.html) covers installation, configuration and failure handling. Once the control plane is installed, take the warm-pool sample from the v0.8.0 tag of the AIBrix repository, set its image to the runtime image above, and create the pool. The sample creates a Deployment named `warm-runtime-pool` whose Pods carry the pool label `claim.model.aibrix.ai/pool: pool-a`. It is not tied to a particular GPU model:
 
 ```bash
 kubectl apply -f samples/modelclaim/warm-runtime-pool.yaml
-kubectl rollout status deployment/warm-runtime-pool-h20 --timeout=10m
+kubectl rollout status deployment/warm-runtime-pool --timeout=10m
 ```
 
 Then create a ModelClaim for the pool. Save the following as `qwen3.yaml`:
@@ -207,7 +207,7 @@ spec:
   modelName: qwen3-0.6b
   podSelector:
     matchLabels:
-      claim.model.aibrix.ai/pool: h20-pool-a
+      claim.model.aibrix.ai/pool: pool-a
   artifactURL: huggingface://Qwen/Qwen3-0.6B
   engine: vllm
   perGPU:
@@ -237,7 +237,7 @@ curl http://localhost:8888/v1/chat/completions \
 To let idle models sleep and release their reservations, configure a policy for the pool:
 
 ```bash
-kubectl annotate deployment warm-runtime-pool-h20 --overwrite \
+kubectl annotate deployment warm-runtime-pool --overwrite \
   'claim.model.aibrix.ai/pool-policy={"lifecycle":{"sleepAfterSeconds":300,"noWakeReserveWhileAsleep":true,"sleepToMakeRoomAfterSeconds":30}}'
 ```
 
