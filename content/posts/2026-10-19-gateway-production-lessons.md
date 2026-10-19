@@ -1,5 +1,5 @@
 ---
-date: '2026-10-12T13:00:00-00:00'
+date: '2026-10-19T13:00:00-00:00'
 draft: false
 title: 'Scaling LLM Inference in Production: Lessons Learned with AIBrix Gateway'
 author: ["The AIBrix Team"]
