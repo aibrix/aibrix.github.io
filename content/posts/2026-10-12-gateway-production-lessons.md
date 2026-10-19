@@ -218,6 +218,8 @@ This avoids requiring an explicit handoff between the Gateway and autoscaler. In
 
 The goal is simple: **scale-down should drain traffic before removing capacity, rather than reacting to termination after it has already started.**
 
+**RFC:** [#3187 — Traffic-Aware Scale-Down and Proactive Draining](https://github.com/vllm-project/aibrix/issues/3187)
+
 ### Don't Rank the Entire Fleet for Every Request
 
 As deployments grow, **sophisticated routing can itself become expensive**. Evaluating every candidate is inexpensive with tens of replicas; with hundreds of replicas, fetching distributed state and scoring the entire fleet for every request can become a meaningful part of routing latency.
@@ -244,6 +246,8 @@ The goal is not simply to make the routing algorithm faster, but to make its **c
 
 The broader lesson is that **the routing algorithm itself must scale with the inference fleet**. At large enough scale, the cost of deciding where a request should go becomes part of inference performance.
 
+**RFC:** [#3188 — Don't Rank the Entire Fleet for Every Request](https://github.com/vllm-project/aibrix/issues/3188)
+
 ### Queuing, Autoscaling, and Request Deadlines
 
 Queuing can absorb short traffic bursts, but in production we found that it can also **hide demand from the autoscaler and amplify overload when traffic continues to increase**.
@@ -261,6 +265,8 @@ Request → Can it start and finish within its deadline? → Admit / Queue / 429
 ```
 
 The broader question is: **when should the system absorb a temporary burst, when should queuing trigger additional capacity, and when should it fail fast rather than spend GPU resources on work that is unlikely to complete?**
+
+**RFC:** [#3189 — Queuing, Autoscaling, and Request Deadlines](https://github.com/vllm-project/aibrix/issues/3189)
 
 ## Closing Thoughts
 
